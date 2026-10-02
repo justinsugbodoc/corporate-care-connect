@@ -2,9 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Building2, Users, CheckCircle2, CalendarDays, ChevronDown, Search } from "lucide-react";
 import { StatusPill } from "@/components/StatusPill";
-import { PACKAGES, peso, shortDate, updatePlan, type CorporatePlan, type EmpStatus } from "@/lib/corporate";
+import { PACKAGES, peso, shortDate, updatePlan, type CorporatePlan, type EmpStatus, type PlanStatus } from "@/lib/corporate";
 
 const EMP_STATUSES: EmpStatus[] = ["Scheduled", "Checked in", "Completed", "No-show"];
+const PLAN_STATUSES: PlanStatus[] = ["Pending", "Approved", "Rescheduled", "Counter-proposed"];
 
 export function PartnersTracker({ plans, onChange, onNew }: { plans: CorporatePlan[]; onChange: () => void; onNew: () => void }) {
   const [q, setQ] = useState("");
@@ -88,6 +89,13 @@ export function PartnersTracker({ plans, onChange, onNew }: { plans: CorporatePl
                 </button>
                 {isOpen && (
                   <div className="border-t p-4">
+                    <label className="mb-3 flex items-center gap-2 text-sm">
+                      <span className="font-semibold">Company status:</span>
+                      <select aria-label={`Status for ${p.company.name}`} className="field w-auto py-1 text-sm" value={p.status}
+                        onChange={(ev) => { updatePlan(p.id, { status: ev.target.value as PlanStatus }); onChange(); }}>
+                        {PLAN_STATUSES.map((s) => <option key={s}>{s}</option>)}
+                      </select>
+                    </label>
                     <div className="grid gap-2 text-sm sm:grid-cols-2">
                       <p><span className="text-muted-foreground">HR contact:</span> {p.company.contact} · {p.company.phone}</p>
                       <p><span className="text-muted-foreground">Email:</span> {p.company.email}</p>
