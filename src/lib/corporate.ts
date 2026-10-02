@@ -39,7 +39,7 @@ export type EmpStatus = "Scheduled" | "Checked in" | "Completed" | "No-show";
 export type Employee = { id: string; name: string; email: string; date: string; slot: string; status: EmpStatus };
 export type PlanStatus = "Pending" | "Approved" | "Rescheduled" | "Counter-proposed";
 
-export type Company = { name: string; contact: string; email: string; phone: string; address: string; tin: string; size: string };
+export type Company = { name: string; contact: string; email: string; phone: string; address: string; size: string };
 
 export type CorporatePlan = {
   id: string;
@@ -68,14 +68,14 @@ function seedPlans(): CorporatePlan[] {
   return [
     {
       id: "co-esamelco", createdAt: "2026-09-01T00:00:00.000Z",
-      company: { name: "Eastern Samar Electric Cooperative", contact: "Maria Santos", email: "hr@esamelco.example", phone: "0917 123 4567", address: "Borongan City, Eastern Samar", tin: "123-456-789-000", size: "6" },
+      company: { name: "Eastern Samar Electric Cooperative", contact: "Maria Santos", email: "hr@esamelco.example", phone: "0917 123 4567", address: "Borongan City, Eastern Samar", size: "6" },
       packageId: "executive", customTests: [], perHead: 3000, dateFrom: "2026-10-12", dateTo: "2026-10-13", headcount: 6,
       employees: mk("esam", ["Juan Dela Cruz", "Ana Reyes", "Pedro Garcia", "Liza Bautista", "Mark Villanueva", "Rosa Mendoza"], ["2026-10-12", "2026-10-13"], ["Completed", "Checked in", "Scheduled"]),
       status: "Approved", clinicNote: "Approved — see you soon!",
     },
     {
       id: "co-bms", createdAt: "2026-09-15T00:00:00.000Z",
-      company: { name: "Borongan Maritime Services", contact: "Carlo Ramos", email: "admin@bms.example", phone: "0918 765 4321", address: "Port Area, Borongan City", tin: "234-567-890-000", size: "4" },
+      company: { name: "Borongan Maritime Services", contact: "Carlo Ramos", email: "admin@bms.example", phone: "0918 765 4321", address: "Port Area, Borongan City", size: "4" },
       packageId: "basic", customTests: [], perHead: 750, dateFrom: "2026-10-20", dateTo: "2026-10-20", headcount: 4,
       employees: mk("bms", ["Ramon Cruz", "Grace Lim", "Noel Abad", "Joy Castillo"], ["2026-10-20"], ["Scheduled", "No-show"]),
       status: "Pending", clinicNote: "",

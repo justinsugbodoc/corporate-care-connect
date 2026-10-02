@@ -32,7 +32,6 @@ const companySchema = z.object({
   email: z.string().trim().email("Enter a valid email, like hr@company.com.").max(255),
   phone: z.string().trim().regex(/^(09|\+639|0\d{1,2})[\d\s-]{7,12}$/, "Enter a PH phone number, e.g. 0917 123 4567."),
   address: z.string().trim().min(5, "Please enter the billing address.").max(250),
-  tin: z.string().trim().regex(/^\d{3}-?\d{3}-?\d{3}(-?\d{3,5})?$/, "Enter a TIN like 123-456-789-000."),
   size: z.string().regex(/^\d+$/, "Enter the number of employees.").refine((v) => Number(v) >= 1 && Number(v) <= 100000, "Enter a number from 1 to 100,000."),
 });
 
@@ -42,7 +41,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 function CorporatePage() {
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [company, setCompany] = useState<Company>({ name: "", contact: "", email: "", phone: "", address: "", tin: "", size: "" });
+  const [company, setCompany] = useState<Company>({ name: "", contact: "", email: "", phone: "", address: "", size: "" });
   const [pkg, setPkg] = useState<PackageId | "">("");
   const [custom, setCustom] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState("");
@@ -162,11 +161,11 @@ function CorporatePage() {
             <h2 className="text-xl sm:col-span-2">Company profile</h2>
             {([
               ["name", "Company name", "organization", "sm:col-span-2"], ["contact", "Contact person", "name", ""], ["email", "Email", "email", ""],
-              ["phone", "Phone", "tel", ""], ["tin", "TIN", "off", ""], ["address", "Billing address", "street-address", "sm:col-span-2"], ["size", "Number of employees", "off", ""],
+              ["phone", "Phone", "tel", ""], ["address", "Billing address", "street-address", "sm:col-span-2"], ["size", "Number of employees", "off", ""],
             ] as const).map(([k, label, ac, cls]) => (
               <Field key={k} id={k} label={label} err={errors[k]} className={cls}>
                 <input id={k} className="field" autoComplete={ac} inputMode={k === "size" ? "numeric" : undefined} maxLength={250}
-                  placeholder={k === "tin" ? "123-456-789-000" : k === "phone" ? "0917 123 4567" : k === "email" ? "hr@company.com" : ""}
+                  placeholder={k === "phone" ? "0917 123 4567" : k === "email" ? "hr@company.com" : ""}
                   value={company[k]} onChange={(e) => setCompany({ ...company, [k]: e.target.value })} />
               </Field>
             ))}
@@ -278,7 +277,7 @@ function CorporatePage() {
             <h2 className="text-xl">Review and submit</h2>
             <dl className="mt-4 divide-y text-sm">
               {[
-                ["Company", company.name], ["Contact", `${company.contact} · ${company.email} · ${company.phone}`], ["Billing address", company.address], ["TIN", company.tin],
+                ["Company", company.name], ["Contact", `${company.contact} · ${company.email} · ${company.phone}`], ["Billing address", company.address],
                 ["Package", `${PACKAGES.find((p) => p.id === pkg)?.name} — ${packageTests(pkg, custom).map(testName).join(", ")}`],
                 ["Date range", `${shortDate(dateFrom)} – ${shortDate(dateTo)}`], ["Employees", String(rows.length)],
                 ["Batches", [...new Set(rows.map((r) => r.date))].sort().map((d) => `${shortDate(d)} (${perDay(d)})`).join(", ")],
