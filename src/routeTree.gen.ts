@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BookRouteImport } from './routes/book'
+import { Route as ManageRouteImport } from './routes/manage'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as BookingReferenceRouteImport } from './routes/booking.$reference'
+import { Route as CorporateIndexRouteImport } from './routes/corporate.index'
+import { Route as CorporateCompanyIdRouteImport } from './routes/corporate.$companyId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageRoute = ManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingReferenceRoute = BookingReferenceRouteImport.update({
+  id: '/booking/$reference',
+  path: '/booking/$reference',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CorporateIndexRoute = CorporateIndexRouteImport.update({
+  id: '/corporate/',
+  path: '/corporate/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CorporateCompanyIdRoute = CorporateCompanyIdRouteImport.update({
+  id: '/corporate/$companyId',
+  path: '/corporate/$companyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/manage': typeof ManageRoute
+  '/services': typeof ServicesRoute
+  '/booking/$reference': typeof BookingReferenceRoute
+  '/corporate/$companyId': typeof CorporateCompanyIdRoute
+  '/corporate/': typeof CorporateIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/manage': typeof ManageRoute
+  '/services': typeof ServicesRoute
+  '/booking/$reference': typeof BookingReferenceRoute
+  '/corporate/$companyId': typeof CorporateCompanyIdRoute
+  '/corporate': typeof CorporateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/manage': typeof ManageRoute
+  '/services': typeof ServicesRoute
+  '/booking/$reference': typeof BookingReferenceRoute
+  '/corporate/$companyId': typeof CorporateCompanyIdRoute
+  '/corporate/': typeof CorporateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/book'
+    | '/manage'
+    | '/services'
+    | '/booking/$reference'
+    | '/corporate/$companyId'
+    | '/corporate/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/book'
+    | '/manage'
+    | '/services'
+    | '/booking/$reference'
+    | '/corporate/$companyId'
+    | '/corporate'
+  id:
+    | '__root__'
+    | '/'
+    | '/book'
+    | '/manage'
+    | '/services'
+    | '/booking/$reference'
+    | '/corporate/$companyId'
+    | '/corporate/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookRoute: typeof BookRoute
+  ManageRoute: typeof ManageRoute
+  ServicesRoute: typeof ServicesRoute
+  BookingReferenceRoute: typeof BookingReferenceRoute
+  CorporateCompanyIdRoute: typeof CorporateCompanyIdRoute
+  CorporateIndexRoute: typeof CorporateIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/$reference': {
+      id: '/booking/$reference'
+      path: '/booking/$reference'
+      fullPath: '/booking/$reference'
+      preLoaderRoute: typeof BookingReferenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/corporate/': {
+      id: '/corporate/'
+      path: '/corporate'
+      fullPath: '/corporate/'
+      preLoaderRoute: typeof CorporateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/corporate/$companyId': {
+      id: '/corporate/$companyId'
+      path: '/corporate/$companyId'
+      fullPath: '/corporate/$companyId'
+      preLoaderRoute: typeof CorporateCompanyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookRoute: BookRoute,
+  ManageRoute: ManageRoute,
+  ServicesRoute: ServicesRoute,
+  BookingReferenceRoute: BookingReferenceRoute,
+  CorporateCompanyIdRoute: CorporateCompanyIdRoute,
+  CorporateIndexRoute: CorporateIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
