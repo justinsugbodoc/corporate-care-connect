@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, Upload, Plus, Trash2, Wand2 } from "lucide-react";
 import { z } from "zod";
 import { StatusPill } from "@/components/StatusPill";
+import { PartnersTracker } from "@/components/PartnersTracker";
 import {
   TESTS, PACKAGES, DAILY_CAPACITY, BATCH_SLOTS, peso, perHeadPrice, packageTests, testName, workdays, autoSchedule, parseCsv, shortDate,
   addPlan, getPlans, updatePlan, type PackageId, type CorporatePlan, type Company,
@@ -52,6 +53,7 @@ function CorporatePage() {
   const [newEmail, setNewEmail] = useState("");
   const [submitted, setSubmitted] = useState<CorporatePlan | null>(null);
   const [plans, setPlans] = useState<CorporatePlan[]>([]);
+  const [tab, setTab] = useState<"partners" | "new">("partners");
   useEffect(() => setPlans(getPlans()), [submitted]);
 
   const perHead = pkg ? perHeadPrice(pkg, custom) : 0;
@@ -133,8 +135,18 @@ function CorporatePage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <h1 className="text-3xl md:text-4xl">Corporate health plans</h1>
-      <p className="mt-2 text-muted-foreground">Check-ups for your whole team — pick a package, upload your roster, and we'll schedule the batches.</p>
+      <p className="mt-2 text-muted-foreground">Track partner companies and their employees, or set up a new team check-up plan.</p>
 
+      <div role="tablist" aria-label="Corporate sections" className="mt-6 inline-flex rounded-full bg-secondary p-1">
+        {([["partners", "Partner companies"], ["new", "Request new plan"]] as const).map(([k, label]) => (
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${tab === k ? "bg-card text-foreground shadow-soft" : "text-muted-foreground"}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "partners" ? <PartnersTracker plans={plans} onChange={() => setPlans(getPlans())} onNew={() => setTab("new")} /> : <>
       <ol className="mt-6 grid grid-cols-5 gap-2" aria-label="Progress">
         {STEPS.map((s, i) => (
           <li key={s} aria-current={i === step ? "step" : undefined}>
@@ -287,6 +299,7 @@ function CorporatePage() {
       </div>
 
       <ClinicView plans={plans} onChange={() => setPlans(getPlans())} />
+      </>}
     </div>
   );
 }
