@@ -57,9 +57,39 @@ export type CorporatePlan = {
 };
 
 const KEY = "anyoneclinic.corporatePlans";
+
+/** [PLACEHOLDER] Sample partner companies so the tracker isn't empty. */
+function seedPlans(): CorporatePlan[] {
+  const mk = (id: string, names: string[], dates: string[], statuses: EmpStatus[]): Employee[] =>
+    names.map((name, i) => ({
+      id: `${id}-e${i}`, name, email: `${name.toLowerCase().split(" ")[0]}@example.com`,
+      date: dates[i % dates.length]!, slot: BATCH_SLOTS[i % BATCH_SLOTS.length]!, status: statuses[i % statuses.length]!,
+    }));
+  return [
+    {
+      id: "co-esamelco", createdAt: "2026-09-01T00:00:00.000Z",
+      company: { name: "Eastern Samar Electric Cooperative", contact: "Maria Santos", email: "hr@esamelco.example", phone: "0917 123 4567", address: "Borongan City, Eastern Samar", tin: "123-456-789-000", size: "6" },
+      packageId: "executive", customTests: [], perHead: 3000, dateFrom: "2026-10-12", dateTo: "2026-10-13", headcount: 6,
+      employees: mk("esam", ["Juan Dela Cruz", "Ana Reyes", "Pedro Garcia", "Liza Bautista", "Mark Villanueva", "Rosa Mendoza"], ["2026-10-12", "2026-10-13"], ["Completed", "Checked in", "Scheduled"]),
+      status: "Approved", clinicNote: "Approved — see you soon!",
+    },
+    {
+      id: "co-bms", createdAt: "2026-09-15T00:00:00.000Z",
+      company: { name: "Borongan Maritime Services", contact: "Carlo Ramos", email: "admin@bms.example", phone: "0918 765 4321", address: "Port Area, Borongan City", tin: "234-567-890-000", size: "4" },
+      packageId: "basic", customTests: [], perHead: 750, dateFrom: "2026-10-20", dateTo: "2026-10-20", headcount: 4,
+      employees: mk("bms", ["Ramon Cruz", "Grace Lim", "Noel Abad", "Joy Castillo"], ["2026-10-20"], ["Scheduled", "No-show"]),
+      status: "Pending", clinicNote: "",
+    },
+  ];
+}
+
 export function getPlans(): CorporatePlan[] {
   if (typeof window === "undefined") return [];
-  try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw === null) { const s = seedPlans(); localStorage.setItem(KEY, JSON.stringify(s)); return s; }
+    return JSON.parse(raw);
+  } catch { return []; }
 }
 function save(list: CorporatePlan[]) { localStorage.setItem(KEY, JSON.stringify(list)); }
 export const getPlan = (id: string) => getPlans().find((p) => p.id === id);
