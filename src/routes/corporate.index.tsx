@@ -46,7 +46,6 @@ function CorporatePage() {
   const [custom, setCustom] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [headcount, setHeadcount] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -56,7 +55,7 @@ function CorporatePage() {
   useEffect(() => setPlans(getPlans()), [submitted]);
 
   const perHead = pkg ? perHeadPrice(pkg, custom) : 0;
-  const count = rows.length || Number(headcount) || 0;
+  const count = rows.length || Number(company.size) || 0;
   const days = useMemo(() => workdays(dateFrom, dateTo), [dateFrom, dateTo]);
   const perDay = (d: string) => rows.filter((r) => r.date === d).length;
 
@@ -75,10 +74,10 @@ function CorporatePage() {
       else if (dateFrom < today()) e["dates"] = "The start date has already passed.";
       else if (dateTo < dateFrom) e["dates"] = "The end date must be on or after the start date.";
       else if (days.length === 0) e["dates"] = "That range only has Sundays — we're closed then.";
-      const h = Number(headcount);
-      if (!Number.isInteger(h) || h < 1) e["headcount"] = "Enter how many employees will come.";
+      const h = Number(company.size);
+      if (!Number.isInteger(h) || h < 1) e["rows"] = "The number of employees in your company details is invalid — go back and fix it.";
       if (rows.length === 0) e["rows"] = "Add your employees by CSV or one at a time.";
-      else if (Number.isInteger(h) && h !== rows.length) e["headcount"] = `Headcount (${h}) doesn't match the employee list (${rows.length}).`;
+      else if (Number.isInteger(h) && h >= 1 && h !== rows.length) e["rows"] = `The employee list (${rows.length}) doesn't match the ${h} employees from your company details.`;
       if (!e["dates"] && rows.length > days.length * DAILY_CAPACITY) e["dates"] = `That's too many people for ${days.length} day(s) at ${DAILY_CAPACITY}/day. Widen the date range.`;
     }
     if (s === 3) {
@@ -114,7 +113,6 @@ function CorporatePage() {
     const parsed = parseCsv(await file.text()).filter((r) => r.name.length >= 2);
     if (!parsed.length) { setErrors({ rows: "We couldn't find any names. Use columns: name, email." }); return; }
     setRows((r) => [...r, ...parsed.map((p) => ({ ...p, id: uid(), date: "", slot: "" }))]);
-    if (!headcount) setHeadcount(String(rows.length + parsed.length));
     setErrors({});
   };
 
@@ -208,10 +206,9 @@ function CorporatePage() {
         {step === 2 && (
           <div className="space-y-5">
             <h2 className="text-xl">Booking request</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field id="from" label="Preferred start date"><input id="from" type="date" min={today()} className="field" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} /></Field>
               <Field id="to" label="Preferred end date"><input id="to" type="date" min={dateFrom || today()} className="field" value={dateTo} onChange={(e) => setDateTo(e.target.value)} /></Field>
-              <Field id="hc" label="Headcount" err={errors["headcount"]}><input id="hc" inputMode="numeric" className="field" value={headcount} onChange={(e) => setHeadcount(e.target.value.replace(/\D/g, "").slice(0, 6))} /></Field>
             </div>
             <Err msg={errors["dates"]} />
             {days.length > 0 && <p className="text-xs text-muted-foreground">{days.length} clinic day(s) · up to {DAILY_CAPACITY} employees/day [capacity placeholder]</p>}
