@@ -42,6 +42,8 @@ export type Booking = {
   companyName?: string;
   companyEmail?: string;
   employeeId?: string;
+  companyId?: string;
+  patientId?: string;
   date: string;
   time: string;
   name: string;
@@ -66,11 +68,11 @@ function save(list: Booking[]) { localStorage.setItem(KEY, JSON.stringify(list))
 export function getBooking(ref: string) {
   return getBookings().find((b) => b.reference.toUpperCase() === ref.toUpperCase());
 }
-export function addBooking(b: Omit<Booking, "reference" | "status" | "createdAt">): Booking {
+export function addBooking(b: Omit<Booking, "reference" | "status" | "createdAt" | "patientId">): Booking {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  const booking: Booking = { ...b, reference: `AC-${code}`, status: "Confirmed", createdAt: new Date().toISOString() };
+  const booking: Booking = { ...b, reference: `AC-${code}`, patientId: `PID-${Date.now().toString().slice(-6)}`, status: "Confirmed", createdAt: new Date().toISOString() };
   save([...getBookings(), booking]);
   return booking;
 }
