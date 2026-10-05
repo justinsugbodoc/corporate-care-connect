@@ -44,6 +44,7 @@ export type Company = { name: string; contact: string; email: string; phone: str
 export type CorporatePlan = {
   id: string;
   createdAt: string;
+  reference?: string;
   company: Company;
   packageId: PackageId;
   customTests: string[];
@@ -93,11 +94,15 @@ export function getPlans(): CorporatePlan[] {
 }
 function save(list: CorporatePlan[]) { localStorage.setItem(KEY, JSON.stringify(list)); }
 export const getPlan = (id: string) => getPlans().find((p) => p.id === id);
-export function addPlan(p: Omit<CorporatePlan, "id" | "createdAt" | "status" | "clinicNote">) {
-  const chars = "abcdefghjkmnpqrstuvwxyz23456789";
-  let id = "";
-  for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
-  const plan: CorporatePlan = { ...p, id: `co-${id}`, createdAt: new Date().toISOString(), status: "Pending", clinicNote: "" };
+const SEED_REFS: Record<string, string> = { "co-esamelco": "CP-ESAM01", "co-bms": "CP-BMS001" };
+/** Reference for a plan; older saved plans fall back to one derived from the id. */
+export const planRef = (p: CorporatePlan) => p.reference || SEED_REFS[p.id] || "CP-" + p.id.replace(/^co-/, "").slice(0, 6).toUpperCase();
+export const getPlanByRef = (ref: string) => getPlans().find((p) => planRef(p).toUpperCase() === ref.trim().toUpperCase());
+export function addPlan(p: Omit<CorporatePlan, "id" | "createdAt" | "status" | "clinicNote" | "reference">) {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  const plan: CorporatePlan = { ...p, id: `co-${code.toLowerCase()}`, reference: `CP-${code}`, createdAt: new Date().toISOString(), status: "Pending", clinicNote: "" };
   save([...getPlans(), plan]);
   return plan;
 }
