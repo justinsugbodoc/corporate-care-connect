@@ -63,7 +63,7 @@ function Index() {
             <Building2 className="h-8 w-8 text-primary" />
             <h3 className="mt-3 text-lg">Corporate / Partner Employee</h3>
             <p className="mt-1 text-sm text-muted-foreground">Covered by a company partnered with AnyoneClinic. Bring your employee ID — services in your package are covered by your company.</p>
-            <Link to="/corporate" className="pill pill-cta mt-5 inline-flex">Book as Corporate</Link>
+            <Link to="/corporate" search={{ tab: "new" }} className="pill pill-cta mt-5 inline-flex">Book as Corporate</Link>
           </div>
           <div className="rounded-3xl bg-card p-6 shadow-soft">
             <User className="h-8 w-8 text-accent" />

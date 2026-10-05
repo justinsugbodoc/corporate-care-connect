@@ -10,6 +10,8 @@ import {
 } from "@/lib/corporate";
 
 export const Route = createFileRoute("/corporate/")({
+  validateSearch: (s: Record<string, unknown>): { tab?: "partners" | "new" } =>
+    s["tab"] === "new" || s["tab"] === "partners" ? { tab: s["tab"] } : {},
   head: () => ({
     meta: [
       { title: "Corporate Health Plans — AnyoneClinic" },
@@ -51,7 +53,9 @@ function CorporatePage() {
   const [newEmail, setNewEmail] = useState("");
   const [submitted, setSubmitted] = useState<CorporatePlan | null>(null);
   const [plans, setPlans] = useState<CorporatePlan[]>([]);
-  const [tab, setTab] = useState<"partners" | "new">("partners");
+  const search = Route.useSearch();
+  const [tab, setTab] = useState<"partners" | "new">(search.tab ?? "partners");
+  useEffect(() => { setTab(search.tab ?? "partners"); }, [search.tab]);
   useEffect(() => setPlans(getPlans()), [submitted]);
 
   const perHead = pkg ? perHeadPrice(pkg, custom) : 0;
