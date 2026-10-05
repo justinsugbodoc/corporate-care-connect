@@ -125,6 +125,11 @@ function CorporatePage() {
       <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-success text-primary-foreground"><Check className="h-8 w-8" /></span>
       <h1 className="mt-4 text-3xl">Request sent — status: Pending</h1>
       <p className="mt-2 text-muted-foreground">The clinic will review your plan for {submitted.company.name}. Share the dashboard link with your HR team.</p>
+      <div className="mx-auto mt-6 max-w-sm rounded-3xl bg-card p-5 shadow-soft">
+        <p className="text-xs font-semibold uppercase text-muted-foreground">Corporate reference no.</p>
+        <p className="text-3xl font-extrabold tracking-wider">{submitted.reference}</p>
+        <p className="mt-2 text-xs text-muted-foreground">Save this. Track approval anytime on Manage Booking → Corporate, using this number and your name ({submitted.company.contact}).</p>
+      </div>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Link to="/corporate/$companyId" params={{ companyId: submitted.id }} className="pill pill-cta">Open company dashboard</Link>
         <button type="button" className="pill pill-outline" onClick={() => window.location.reload()}>Start another plan</button>
