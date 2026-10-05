@@ -28,7 +28,7 @@ const STEPS = ["Patient type", "Service", "Date & time", "Your details", "Review
 const corporateSchema = z.object({
   companyName: z.string().trim().min(2, "Please enter your company name.").max(100, "Company name must be 100 characters or fewer."),
   companyEmail: z.string().trim().min(1, "Please enter your work or company email.").email("Enter a valid company email, like name@company.com.").max(255, "Company email must be 255 characters or fewer."),
-  employeeId: z.string().trim().regex(/^[A-Za-z0-9-]{3,20}$/, "Enter your patient ID (3–20 letters, numbers, or dashes)."),
+  companyId: z.string().trim().regex(/^[A-Za-z0-9-]{2,20}$/, "Enter your company ID (2–20 letters, numbers, or dashes)."),
 });
 
 function todayStr() {
@@ -42,7 +42,7 @@ function BookPage() {
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [f, setF] = useState({
-    patientType: (type ?? "") as PatientType | "", companyName: "", companyEmail: "", employeeId: "",
+    patientType: (type ?? "") as PatientType | "", companyName: "", companyEmail: "", companyId: "",
     serviceId: SERVICES.some((s) => s.id === service) ? (service ?? "") : "",
     date: "", time: "", name: "", age: "", sex: "", mobile: "", email: "", notes: "", hasRequest: false,
   });
@@ -85,7 +85,7 @@ function BookPage() {
   const next = () => validate(step) && setStep(step + 1);
   const confirm = () => {
     const { patientType, ...rest } = f;
-    const b = addBooking({ ...rest, patientType: patientType || "walkin", ...(patientType !== "corporate" ? { companyName: "", companyEmail: "", employeeId: "" } : {}), mobile: f.mobile.replace(/[\s-]/g, "") });
+    const b = addBooking({ ...rest, patientType: patientType || "walkin", ...(patientType !== "corporate" ? { companyName: "", companyEmail: "", companyId: "" } : {}), mobile: f.mobile.replace(/[\s-]/g, "") });
     navigate({ to: "/booking/$reference", params: { reference: b.reference } });
   };
 
@@ -129,8 +129,8 @@ function BookPage() {
                 <Field id="companyEmail" label="Email" err={errors["companyEmail"]}>
                   <input id="companyEmail" type="email" className="field" placeholder="name@company.com" maxLength={255} value={f.companyEmail} onChange={(e) => set("companyEmail", e.target.value)} autoComplete="email" />
                 </Field>
-                <Field id="employeeId" label="Patient ID" err={errors["employeeId"]}>
-                  <input id="employeeId" className="field" placeholder="e.g. EMP-12345" maxLength={20} value={f.employeeId} onChange={(e) => set("employeeId", e.target.value)} />
+                <Field id="companyId" label="Company ID" err={errors["companyId"]}>
+                  <input id="companyId" className="field" placeholder="e.g. CO-ESAMELCO" maxLength={20} value={f.companyId} onChange={(e) => set("companyId", e.target.value)} />
                 </Field>
               </div>
             )}
@@ -239,7 +239,7 @@ function BookPage() {
             <dl className="mt-4 divide-y text-sm">
               {[
                 ["Patient type", f.patientType === "corporate" ? "Partner Company Employee" : "Walk-in Individual"],
-                ...(f.patientType === "corporate" ? [["Company", f.companyName], ["Email (company)", f.companyEmail], ["Patient ID", f.employeeId]] : []),
+                ...(f.patientType === "corporate" ? [["Company", f.companyName], ["Email (company)", f.companyEmail], ["Company ID", f.companyId]] : []),
                 ["Payment", paymentNote(f.patientType || undefined)],
                 ["Service", serviceName(f.serviceId)], ["Date", formatDate(f.date)], ["Time", f.time],
                 ["Name", f.name], ["Age / Sex", `${f.age} / ${f.sex}`], ["Mobile", f.mobile], ["Email", f.email || "—"],
